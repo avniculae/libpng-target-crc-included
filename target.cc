@@ -73,11 +73,13 @@ bool DetectLargeSize(const uint8_t *data, size_t size) {
 // http://www.libpng.org/pub/png/book/chapter13.html
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (size < kPngHeaderSize) {
+    printf("1\n");
     return 0;
   }
   ScopedPngObject O;
   if (png_sig_cmp(const_cast<uint8_t*>(data), 0, kPngHeaderSize)) {
     // not a PNG.
+    printf("2\n");
     return 0;
   }
 
@@ -109,6 +111,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   // libpng error handling.
   if (setjmp(png_ptr->jmpbuf)) {
+    printf("3\n");
     return 0;
   }
 
@@ -123,6 +126,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (!png_get_IHDR(png_ptr, info_ptr, &width, &height,
         &bit_depth, &color_type, &interlace_type,
         &compression_type, &filter_type)) {
+    printf("4\n");
     return 0;
   }
 
